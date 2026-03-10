@@ -1,0 +1,174 @@
+{
+  "id": "root_union",
+  "type": "union",
+  "husband": {
+    "id": "molsha",
+    "name": "Молша",
+    "years": "1884–1946"
+  },
+  "wife": {
+    "id": "qatsha",
+    "name": "Қатша",
+    "years": "1884–1964"
+  },
+  "children": [
+    {
+      "id": "baken_union",
+      "type": "union",
+      "husband": {
+        "id": "baken",
+        "name": "Бәкен",
+        "years": "1908–1975"
+      },
+      "wife": {
+        "id": "tang_omar",
+        "name": "Тәң Омар",
+        "years": "1907–1985",
+        "ru": "Айдабол"
+      },
+      "children": [
+        {
+          "id": "abdiqapar_union",
+          "type": "union",
+          "husband": {
+            "id": "abdiqapar",
+            "name": "Әбдіқапар",
+            "years": "1938–2007"
+          },
+          "wife": {
+            "id": "mayra",
+            "name": "Майра",
+            "years": "1940–2020",
+            "ru": "Айдабол"
+          },
+          "children": [
+            {
+              "id": "qarlygash_union",
+              "type": "union",
+              "husband": { "id": "arsen", "name": "Арсен", "years": "1957–2010", "ru": "Қозған" },
+              "wife": { "id": "qarlygash", "name": "Қарлығаш", "years": "1961" },
+              "children": [
+                {
+                  "id": "aigerim_union",
+                  "type": "union",
+                  "husband": { "id": "murat", "name": "Мұрат", "years": "1983" },
+                  "wife": { "id": "aigerim", "name": "Айгерім", "years": "1985", "ru": "Шапырашты" },
+                  "children": [
+                    { "id": "inkar", "name": "Іңкәр", "years": "2010", "type": "person" }
+                  ]
+                },
+                {
+                  "id": "mashur_union",
+                  "type": "union",
+                  "husband": { "id": "mashur", "name": "Мәшһүр", "years": "1989" },
+                  "wife": { "id": "aynur", "name": "Айнұр", "years": "1990", "ru": "Беріш" },
+                  "children": [
+                    { "id": "muhamedrakhim", "name": "Мұхамедрахим", "years": "2013", "type": "person" },
+                    { "id": "ibrahim", "name": "Ибрагим", "years": "2016", "type": "person" },
+                    { "id": "kausar", "name": "Кәусар", "years": "2016", "type": "person" },
+                    { "id": "ahmet", "name": "Ахмет", "years": "2025", "type": "person" }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "muhtar_union",
+              "type": "union",
+              "husband": { "id": "muhtar", "name": "Мұхтар", "years": "1964" },
+              "wife": { "id": "nurbanu", "name": "Нұрбану", "years": "1965", "ru": "Қаржас" },
+              "children": [
+                {
+                  "id": "qanysh_union",
+                  "type": "union",
+                  "husband": { "id": "qanysh", "name": "Қаныш", "years": "1989" },
+                  "wife": { "id": "anar_daughter", "name": "Анар", "years": "1988", "ru": "Уақ" },
+                  "children": [
+                    { "id": "aisar", "name": "Айсар", "years": "2017", "type": "person" },
+                    { "id": "rabia", "name": "Рабия", "years": "2019", "type": "person" },
+                    { "id": "balausa", "name": "Балауса", "years": "2021", "type": "person" }
+                  ]
+                },
+                { "id": "bibinur", "name": "Бибінұр", "years": "1992", "type": "person" }
+              ]
+            },
+            {
+              "id": "asqar_union",
+              "type": "union",
+              "husband": { "id": "asqar", "name": "Асқар", "years": "1967" },
+              "wife": { "id": "meruert", "name": "Меруерт", "years": "1968", "ru": "Қаржас" },
+              "children": [
+                {
+                  "id": "samal_union",
+                  "type": "union",
+                  "husband": { "id": "vadim", "name": "Вадим", "years": "1994" },
+                  "wife": { "id": "samal", "name": "Самал", "years": "1994", "ru": "Өзге ұлт" },
+                  "children": [
+                    { "id": "tomiris", "name": "Томирис", "years": "2024", "type": "person" }
+                  ]
+                },
+                { "id": "aruzhan", "name": "Аружан", "years": "1999", "type": "person" },
+                { "id": "abulkhair", "name": "Абулхаир", "years": "2008", "type": "person" }
+              ]
+            },
+            {
+              "id": "anar_husband_union",
+              "type": "union",
+              "husband": { "id": "anar_husband", "name": "Анар", "years": "1969" },
+              "children": [
+                {
+                  "id": "sanzhar_union",
+                  "type": "union",
+                  "husband": { "id": "sanzhar", "name": "Санжар", "years": "2003" },
+                  "wife": { "id": "elmira", "name": "Эльмира", "years": "2004", "ru": "Дәулет" }
+                }
+              ]
+            },
+            {
+              "id": "aitmuhamed_union",
+              "type": "union",
+              "husband": { "id": "aitmuhamed", "name": "Айтмұхамед", "years": "1972" },
+              "wife": { "id": "gulnar", "name": "Гүлнар", "years": "1971", "ru": "Тұлпар" },
+              "children": [
+                {
+                  "id": "aidana_union",
+                  "type": "union",
+                  "husband": { "id": "askhat", "name": "Асхат", "years": "1988" },
+                  "wife": { "id": "aidana", "name": "Айдана", "years": "1992", "ru": "Орманшы" },
+                  "children": [
+                    { "id": "aizara", "name": "Айзара", "years": "2013", "type": "person" },
+                    { "id": "nurislam", "name": "Нұрислам", "years": "2015", "type": "person" },
+                    { "id": "khasim", "name": "Хасим", "years": "2023", "type": "person" }
+                  ]
+                },
+                {
+                  "id": "adiya_union",
+                  "type": "union",
+                  "husband": { "id": "erlan", "name": "Ерлан", "years": "1988" },
+                  "wife": { "id": "adiya", "name": "Адия", "years": "1996", "ru": "Найман" },
+                  "children": [
+                    { "id": "akhmadi", "name": "Ахмади", "years": "2024", "type": "person" },
+                    { "id": "aylana", "name": "Айлана", "years": "2026", "type": "person" }
+                  ]
+                },
+                { "id": "zhanel", "name": "Жанель", "years": "2003", "type": "person" },
+                { "id": "nurasyl", "name": "Нұрасыл", "years": "2005", "type": "person" }
+              ]
+            },
+            {
+              "id": "nurzhan_union",
+              "type": "union",
+              "husband": { "id": "nurzhan", "name": "Нұржан", "years": "1976" },
+              "wife": { "id": "alua", "name": "Алуа", "years": "1976", "ru": "Айдабол" },
+              "children": [
+                { "id": "aldiar", "name": "Алдияр", "years": "1998", "type": "person" },
+                { "id": "aisana", "name": "Айсана", "years": "2000", "type": "person" },
+                { "id": "alnur", "name": "Алнұр", "years": "2006", "type": "person" },
+                { "id": "aisultan", "name": "Айсұлтан", "years": "2012", "type": "person" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}   
