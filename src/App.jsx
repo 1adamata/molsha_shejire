@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import treeData from "./family-tree.json";
 
 // ─── Colors ───
@@ -18,11 +18,13 @@ const C = {
 };
 
 // ─── Layout Constants ───
-const CARD_W = 190;
-const MARRIAGE_W = 66;
+const DESKTOP_CARD_W = 190;
+const MOBILE_CARD_W = 148;
+const DESKTOP_MARRIAGE_W = 66;
+const MOBILE_MARRIAGE_W = 42;
 
 // ─── Editorial Person Card ───
-function PersonCard({ person, onClick, isSelected }) {
+function PersonCard({ person, onClick, isSelected, cardWidth, isMobile }) {
   const isDeceased =
     person?.years &&
     person.years.includes("–") &&
@@ -38,10 +40,10 @@ function PersonCard({ person, onClick, isSelected }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         position: "relative",
-        width: CARD_W,
+        width: cardWidth,
         background: C.white,
         border: `2px solid ${hovered || isSelected ? C.black : C.gray300}`,
-        padding: "28px 16px 16px",
+        padding: isMobile ? "24px 12px 12px" : "28px 16px 16px",
         cursor: "pointer",
         textAlign: "left",
         transition: "border-color 0.2s, box-shadow 0.2s",
@@ -65,7 +67,7 @@ function PersonCard({ person, onClick, isSelected }) {
         <div style={{ flex: 1 }}>
           <div
             style={{
-              fontSize: 18,
+              fontSize: isMobile ? 16 : 18,
               fontFamily: "'Advent Pro', sans-serif",
               fontWeight: 600,
               lineHeight: 1.2,
@@ -78,7 +80,7 @@ function PersonCard({ person, onClick, isSelected }) {
           {person.years && (
             <div
               style={{
-                fontSize: 13,
+                fontSize: isMobile ? 12 : 13,
                 color: C.gray600,
                 letterSpacing: "0.02em",
               }}
@@ -88,7 +90,7 @@ function PersonCard({ person, onClick, isSelected }) {
           )}
         </div>
         {isDeceased && (
-          <span style={{ fontSize: 24, color: C.gray400, lineHeight: 1, marginLeft: 8 }}>†</span>
+          <span style={{ fontSize: isMobile ? 20 : 24, color: C.gray400, lineHeight: 1, marginLeft: 8 }}>†</span>
         )}
       </div>
 
@@ -115,27 +117,30 @@ function PersonCard({ person, onClick, isSelected }) {
 }
 
 // ─── Single Person Node ───
-function SinglePersonNode({ person, onPersonClick, selectedPerson }) {
+function SinglePersonNode({ person, onPersonClick, selectedPerson, layout }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
       <PersonCard
         person={person}
         onClick={onPersonClick}
         isSelected={selectedPerson?.id === person.id}
+        cardWidth={layout.cardWidth}
+        isMobile={layout.isMobile}
       />
     </div>
   );
 }
 
 // ─── Couple Node ───
-function CoupleNode({ husband, wife, children, expanded, toggle, onPersonClick, selectedPerson, unionId }) {
+function CoupleNode({ husband, wife, children, expanded, toggle, onPersonClick, selectedPerson, unionId, layout }) {
+  const { cardWidth, marriageWidth, isMobile } = layout;
   const nodeId = `${husband?.id || "unknown"}_${wife?.id || "unknown"}`;
   const isOpen = expanded[nodeId] === true;
   const hasChildren = children && children.length > 0;
   const coupleRef = useRef(null);
   const primaryPerson = husband || wife;
   const hasBothSpouses = Boolean(husband && wife);
-  const rowWidth = hasBothSpouses ? CARD_W * 2 + MARRIAGE_W : CARD_W;
+  const rowWidth = hasBothSpouses ? cardWidth * 2 + marriageWidth : cardWidth;
 
   // Determine bloodline descendant based on union ID convention
   const husbandIsDescendant = unionId?.startsWith(husband?.id + "_");
@@ -143,9 +148,9 @@ function CoupleNode({ husband, wife, children, expanded, toggle, onPersonClick, 
   const isRoot = !husbandIsDescendant && !wifeIsDescendant;
   const descendCX = hasBothSpouses
     ? husbandIsDescendant
-      ? CARD_W / 2
-      : CARD_W + MARRIAGE_W + CARD_W / 2
-    : CARD_W / 2;
+      ? cardWidth / 2
+      : cardWidth + marriageWidth + cardWidth / 2
+    : cardWidth / 2;
   const coupleCX = rowWidth / 2;
   const connectorLeft = Math.min(descendCX, coupleCX);
   const connectorWidth = Math.abs(descendCX - coupleCX);
@@ -193,12 +198,14 @@ function CoupleNode({ husband, wife, children, expanded, toggle, onPersonClick, 
               person={husband}
               onClick={onPersonClick}
               isSelected={selectedPerson?.id === husband.id}
+              cardWidth={cardWidth}
+              isMobile={isMobile}
             />
 
             {/* Marriage connection line with diamond */}
-            <div style={{ display: "flex", alignItems: "center", paddingTop: 36 }}>
+            <div style={{ display: "flex", alignItems: "center", paddingTop: isMobile ? 32 : 36 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 0 }}>
-                <div style={{ width: 28, height: 2, background: C.black }} />
+                <div style={{ width: marriageWidth / 2 - 5, height: 2, background: C.black }} />
                 <div
                   style={{
                     width: 10,
@@ -208,7 +215,7 @@ function CoupleNode({ husband, wife, children, expanded, toggle, onPersonClick, 
                     flexShrink: 0,
                   }}
                 />
-                <div style={{ width: 28, height: 2, background: C.black }} />
+                <div style={{ width: marriageWidth / 2 - 5, height: 2, background: C.black }} />
               </div>
             </div>
 
@@ -216,6 +223,8 @@ function CoupleNode({ husband, wife, children, expanded, toggle, onPersonClick, 
               person={wife}
               onClick={onPersonClick}
               isSelected={selectedPerson?.id === wife.id}
+              cardWidth={cardWidth}
+              isMobile={isMobile}
             />
           </>
         ) : (
@@ -223,6 +232,8 @@ function CoupleNode({ husband, wife, children, expanded, toggle, onPersonClick, 
             person={primaryPerson}
             onClick={onPersonClick}
             isSelected={selectedPerson?.id === primaryPerson?.id}
+            cardWidth={cardWidth}
+            isMobile={isMobile}
           />
         )}
       </div>
@@ -239,7 +250,7 @@ function CoupleNode({ husband, wife, children, expanded, toggle, onPersonClick, 
             fontSize: 11,
             textTransform: "uppercase",
             letterSpacing: "0.08em",
-            padding: "4px 14px",
+            padding: isMobile ? "4px 10px" : "4px 14px",
             cursor: "pointer",
             transition: "background 0.15s, color 0.15s",
           }}
@@ -257,15 +268,15 @@ function CoupleNode({ husband, wife, children, expanded, toggle, onPersonClick, 
           <div style={{ width: 2, height: 30, background: C.black }} />
 
           {/* Children container */}
-          <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "flex-start", gap: 24, paddingTop: children.length > 1 ? 20 : 0 }}>
+          <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "flex-start", gap: isMobile ? 12 : 24, paddingTop: children.length > 1 ? 20 : 0 }}>
             {/* Horizontal bar connecting children */}
             {children.length > 1 && (
               <div
                 style={{
                   position: "absolute",
                   top: 0,
-                  left: 80,
-                  right: 80,
+                  left: isMobile ? 46 : 80,
+                  right: isMobile ? 46 : 80,
                   height: 2,
                   background: C.black,
                 }}
@@ -285,6 +296,7 @@ function CoupleNode({ husband, wife, children, expanded, toggle, onPersonClick, 
                   toggle={toggle}
                   onPersonClick={onPersonClick}
                   selectedPerson={selectedPerson}
+                  layout={layout}
                 />
               </div>
             ))}
@@ -296,9 +308,9 @@ function CoupleNode({ husband, wife, children, expanded, toggle, onPersonClick, 
 }
 
 // ─── Family Node Dispatcher ───
-function FamilyNode({ node, expanded, toggle, onPersonClick, selectedPerson }) {
+function FamilyNode({ node, expanded, toggle, onPersonClick, selectedPerson, layout }) {
   if (node.type === "person" || (!node.type && node.name)) {
-    return <SinglePersonNode person={node} onPersonClick={onPersonClick} selectedPerson={selectedPerson} />;
+    return <SinglePersonNode person={node} onPersonClick={onPersonClick} selectedPerson={selectedPerson} layout={layout} />;
   }
 
   if (node.type === "union") {
@@ -312,6 +324,7 @@ function FamilyNode({ node, expanded, toggle, onPersonClick, selectedPerson }) {
         toggle={toggle}
         onPersonClick={onPersonClick}
         selectedPerson={selectedPerson}
+        layout={layout}
       />
     );
   }
@@ -469,6 +482,26 @@ export default function ShejireTree() {
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth < 768;
+  });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const updateMobile = (event) => setIsMobile(event.matches);
+
+    setIsMobile(mediaQuery.matches);
+    mediaQuery.addEventListener("change", updateMobile);
+
+    return () => mediaQuery.removeEventListener("change", updateMobile);
+  }, []);
+
+  const layout = useMemo(() => ({
+    isMobile,
+    cardWidth: isMobile ? MOBILE_CARD_W : DESKTOP_CARD_W,
+    marriageWidth: isMobile ? MOBILE_MARRIAGE_W : DESKTOP_MARRIAGE_W,
+  }), [isMobile]);
 
   const toggle = (id) => {
     setExpanded((prev) => ({
@@ -498,7 +531,7 @@ export default function ShejireTree() {
   return (
     <div
       style={{
-        height: "100vh",
+        minHeight: "100vh",
         background: C.white,
         position: "relative",
         overflow: "hidden",
@@ -523,18 +556,18 @@ export default function ShejireTree() {
       <header
         style={{
           borderBottom: `2px solid ${C.black}`,
-          padding: "18px 40px",
+          padding: isMobile ? "14px 16px" : "18px 40px",
           background: C.white,
           flexShrink: 0,
           zIndex: 40,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "stretch" : "center", justifyContent: "space-between", gap: isMobile ? 14 : 0 }}>
           {/* Left: Title */}
           <div style={{ flex: 1 }}>
             <p
               style={{
-                fontSize: 10,
+                fontSize: isMobile ? 9 : 10,
                 letterSpacing: "0.3em",
                 textTransform: "uppercase",
                 color: C.navy,
@@ -546,7 +579,7 @@ export default function ShejireTree() {
             <h1
               style={{
                 margin: 0,
-                fontSize: 32,
+                fontSize: isMobile ? 24 : 32,
                 fontFamily: "'Advent Pro', sans-serif",
                 fontWeight: 600,
                 letterSpacing: "-0.01em",
@@ -558,19 +591,19 @@ export default function ShejireTree() {
           </div>
 
           {/* Right: Stats + Controls */}
-          <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: isMobile ? 10 : 20, alignItems: "center", justifyContent: isMobile ? "space-between" : "flex-start" }}>
             {/* Stats */}
-            <div style={{ textAlign: "right", borderRight: `2px solid ${C.black}`, paddingRight: 20 }}>
-              <p style={{ fontSize: 26, fontFamily: "'Advent Pro', sans-serif", fontWeight: 600, margin: 0, lineHeight: 1, color: C.black }}>{totalPeople}</p>
+            <div style={{ textAlign: isMobile ? "left" : "right", borderRight: isMobile ? "none" : `2px solid ${C.black}`, paddingRight: isMobile ? 0 : 20 }}>
+              <p style={{ fontSize: isMobile ? 22 : 26, fontFamily: "'Advent Pro', sans-serif", fontWeight: 600, margin: 0, lineHeight: 1, color: C.black }}>{totalPeople}</p>
               <p style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: C.gray600, marginTop: 2 }}>Мүшелер</p>
             </div>
-            <div style={{ textAlign: "right", paddingRight: 20 }}>
-              <p style={{ fontSize: 26, fontFamily: "'Advent Pro', sans-serif", fontWeight: 600, margin: 0, lineHeight: 1, color: C.black }}>{totalGenerations}</p>
+            <div style={{ textAlign: isMobile ? "left" : "right", paddingRight: isMobile ? 0 : 20 }}>
+              <p style={{ fontSize: isMobile ? 22 : 26, fontFamily: "'Advent Pro', sans-serif", fontWeight: 600, margin: 0, lineHeight: 1, color: C.black }}>{totalGenerations}</p>
               <p style={{ fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: C.gray600, marginTop: 2 }}>Ұрпақ</p>
             </div>
 
             {/* Search */}
-            <div style={{ position: "relative" }}>
+            <div style={{ position: "relative", flex: isMobile ? "1 1 100%" : "0 0 auto", minWidth: isMobile ? "100%" : 0 }}>
               <div style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: C.gray400 }}>
                 <SearchIcon />
               </div>
@@ -580,7 +613,7 @@ export default function ShejireTree() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
-                  width: 200,
+                  width: isMobile ? "100%" : 200,
                   paddingLeft: 32,
                   paddingRight: 10,
                   paddingTop: 7,
@@ -599,7 +632,7 @@ export default function ShejireTree() {
             <button
               onClick={expandAll}
               style={{
-                padding: "7px 14px",
+                padding: isMobile ? "8px 12px" : "7px 14px",
                 border: `2px solid ${C.black}`,
                 background: C.white,
                 color: C.black,
@@ -609,6 +642,7 @@ export default function ShejireTree() {
                 cursor: "pointer",
                 fontFamily: "inherit",
                 transition: "background 0.15s, color 0.15s",
+                flex: isMobile ? "1 1 calc(33.333% - 8px)" : "0 0 auto",
               }}
               onMouseEnter={(e) => { e.target.style.background = C.black; e.target.style.color = C.white; }}
               onMouseLeave={(e) => { e.target.style.background = C.white; e.target.style.color = C.black; }}
@@ -627,7 +661,7 @@ export default function ShejireTree() {
                 });
               }}
               style={{
-                padding: "7px 14px",
+                padding: isMobile ? "8px 12px" : "7px 14px",
                 border: `2px solid ${C.black}`,
                 background: C.white,
                 color: C.black,
@@ -637,6 +671,7 @@ export default function ShejireTree() {
                 cursor: "pointer",
                 fontFamily: "inherit",
                 transition: "background 0.15s, color 0.15s",
+                flex: isMobile ? "1 1 calc(33.333% - 8px)" : "0 0 auto",
               }}
               onMouseEnter={(e) => { e.target.style.background = C.black; e.target.style.color = C.white; }}
               onMouseLeave={(e) => { e.target.style.background = C.white; e.target.style.color = C.black; }}
@@ -648,7 +683,7 @@ export default function ShejireTree() {
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               style={{
-                padding: "7px 14px",
+                padding: isMobile ? "8px 12px" : "7px 14px",
                 border: `2px solid ${C.black}`,
                 background: isSidebarOpen ? C.black : C.white,
                 color: isSidebarOpen ? C.white : C.black,
@@ -659,8 +694,10 @@ export default function ShejireTree() {
                 fontFamily: "inherit",
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
                 gap: 6,
                 transition: "background 0.15s, color 0.15s",
+                flex: isMobile ? "1 1 calc(33.333% - 8px)" : "0 0 auto",
               }}
             >
               <UserIcon />
@@ -671,7 +708,7 @@ export default function ShejireTree() {
       </header>
 
       {/* ── Main Content ── */}
-      <div style={{ display: "flex", flex: 1, minHeight: 0, overflow: "hidden" }}>
+      <div style={{ display: "flex", flex: 1, minHeight: 0, overflow: "hidden", position: "relative" }}>
         {/* Tree Canvas */}
         <div
           id="tree-canvas"
@@ -687,7 +724,7 @@ export default function ShejireTree() {
               minWidth: "max-content",
               display: "inline-flex",
               justifyContent: "center",
-              padding: "60px 40px 60px",
+              padding: isMobile ? "28px 16px 32px" : "60px 40px 60px",
               minHeight: "100%",
             }}
           >
@@ -697,6 +734,7 @@ export default function ShejireTree() {
               toggle={toggle}
               onPersonClick={handlePersonClick}
               selectedPerson={selectedPerson}
+              layout={layout}
             />
           </div>
         </div>
@@ -705,13 +743,20 @@ export default function ShejireTree() {
         {isSidebarOpen && (
           <div
             style={{
-              width: 340,
+              width: isMobile ? "100%" : 340,
+              maxHeight: isMobile ? "58vh" : "none",
               background: C.white,
-              borderLeft: `2px solid ${C.black}`,
+              borderLeft: isMobile ? "none" : `2px solid ${C.black}`,
+              borderTop: isMobile ? `2px solid ${C.black}` : "none",
               overflowY: "auto",
               flexShrink: 0,
-              padding: 28,
-              position: "relative",
+              padding: isMobile ? "20px 16px 16px" : 28,
+              position: isMobile ? "absolute" : "relative",
+              left: isMobile ? 0 : "auto",
+              right: 0,
+              bottom: isMobile ? 0 : "auto",
+              zIndex: 20,
+              boxShadow: isMobile ? "0 -8px 24px rgba(0,0,0,0.12)" : "none",
             }}
           >
             <button
@@ -748,10 +793,12 @@ export default function ShejireTree() {
           flexShrink: 0,
           background: C.white,
           borderTop: `2px solid ${C.black}`,
-          padding: "12px 40px",
+          padding: isMobile ? "10px 16px" : "12px 40px",
           display: "flex",
-          alignItems: "center",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "flex-start" : "center",
           justifyContent: "space-between",
+          gap: isMobile ? 6 : 0,
           fontSize: 10,
           textTransform: "uppercase",
           letterSpacing: "0.12em",
@@ -760,9 +807,9 @@ export default function ShejireTree() {
         }}
       >
         <div>Біздің Шежіре © 2026</div>
-        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: isMobile ? 10 : 24, alignItems: "center", flexWrap: "wrap" }}>
           <span>Modern Editorial Heritage</span>
-          <span>•</span>
+          {!isMobile && <span>•</span>}
           <span>Молша — Қатша</span>
         </div>
       </div>
